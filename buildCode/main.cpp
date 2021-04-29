@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// 考虑了转义字符
+
 int main()
 {
 	string filePath = "E:/课程与任务/编译原理/实验/2021编译原理词法分析程序撰写的实验作业/work/测试用例/老师提供的测试文件/专有符号/test_3_formula";

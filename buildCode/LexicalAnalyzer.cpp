@@ -134,243 +134,202 @@ void LexicalAnalyzer::analyze()
 			continue;
 		}
 
-		switch (nowState)
-		{
-		case State::kStart:
-			if (isspace(nowChar)) 
-				break;
-			else if (nowChar == '0') {
-				nowState = State::kIntager0;
-				nowType = Token::TokenType::kInteger;
-			}
-			else if (isdigit(nowChar) && nowChar != '0') {
-				nowState = State::kIntager;
-				nowType = Token::TokenType::kInteger;
-			}
-			else if (Sign::isOneCharSign(nowChar)) {
-				nowState = State::kOneCharSign;
-				nowType = Token::TokenType::kSign;
-			}
-			else if (Sign::isTwoCharSignStart(nowChar)) {
-				nowState = State::kTwoCharSign;
-				nowType = Token::TokenType::kSign;
-			}
-			else if (nowChar == '"') {
-				nowState = State::kString;
-				nowType = Token::TokenType::kString;
-			}
-			else if (isalpha(nowChar))
-				nowState = State::kIDOrKeyOrBool;
-			else {
-				// start 状态无法识别的单词开头（特殊符号）错误
-				notReadNext = true;
-				toNextLine = true;
-				this->isError = true;
-				this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "start 状态无法识别的单词开头（特殊符号）错误");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			nowWord.push_back(nowChar);
-			break;
-		case State::kDone:
-			notReadNext = true;
-			this->tokenList.push_back(Token(nowWord, nowType));
-			nowWord.clear();
-			nowType = Token::TokenType::kUnknown;
-			nowState = State::kStart;
-			break;
-		case State::kIntager0:
-			if (nowChar == 'l' || nowChar == 'L') {
-				nowWord.push_back(nowChar);
-			}
-			else if (isdigit(nowChar) || (isalpha(nowChar) && nowChar != 'l' && nowChar != 'L')) {
-				// 0作为数字或id开头错误
-				notReadNext = true;
-				toNextLine = true;
-				this->isError = true;
-				this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "0作为数字或id开头错误");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			else {
-				notReadNext = true;
-			}
-			nowState = State::kDone;
-			break;
-		case State::kIntager:
-			if (isdigit(nowChar)) {
-				nowWord.push_back(nowChar);
-			}
-			else if (nowChar == 'l' || nowChar == 'L') {
-				nowState = State::kDone;
-				nowWord.push_back(nowChar);
-			}
-			else if (isalpha(nowChar) && nowChar != 'l' && nowChar != 'L') {
-				// 数字作为id开头错误
-				notReadNext = true;
-				toNextLine = true;
-				this->isError = true;
-				this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "数字作为id开头错误");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			else {
-				nowState = State::kDone;
-				notReadNext = true;
-			}
-			break;
-		case State::kOneCharSign:
-			notReadNext = true;
-			nowState = State::kDone;
-			break;
-		case State::kTwoCharSign:
-			if (nowWord.size() != 1) {
-				// 双符号第一个符号放入错误（词法分析程序）
-				notReadNext = true;
-				toNextLine = true;
-				this->isError = true;
-				this->errorMsgs.push_back("双符号第一个符号放入错误（词法分析程序）");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			else if (nowWord.at(0) == nowChar) {
-				nowState = State::kDone;
-				nowWord.push_back(nowChar);
-			}
-			else {
-				// 双符号读入第二个符号错误
-				notReadNext = true;
-				toNextLine = true;
-				this->isError = true;
-				this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "双符号读入第二个符号错误");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			break;
-		case State::kString:
-			if (nowChar == '"') {
-				nowState = State::kDone;
-				nowWord.push_back(nowChar);
-			}
-			else if (nowChar == '\\') {
-				nowState = State::kESC;
-				nowWord.push_back(nowChar);
-			}
-			else {
-				nowWord.push_back(nowChar);
-			}
-			break;
-		// 转义字符处理状态
-		case State::kESC:
-			if (nowChar == 'b' || nowChar == 't' || nowChar == 'n' || nowChar == 'f' || nowChar == 'r' 
-				|| nowChar == '"' || nowChar == '\\') {
-
-				nowState = State::kString;
-				nowWord.push_back(nowChar);
-			}
-			else {
-				// 无此转义字符错误
-				notReadNext = true;
-				toNextLine = true;
-				toNextLineInString = true;
-				this->isError = true;
-				this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "无此转义字符错误");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			break;
-		case State::kIDOrKeyOrBool:
-			if (isalpha(nowChar) || isdigit(nowChar)) {
-				nowWord.push_back(nowChar);
-			}
-			else if (nowChar == '_') {
-				nowState = State::kID1;
-				nowType = Token::TokenType::kIdentifier;
-				nowWord.push_back(nowChar);
-			}
-			else {
-				notReadNext = true;
-				if (nowType == Token::TokenType::kUnknown) {
-					if (KeyWord::isKeyWord(nowWord)) {
-						nowType = Token::TokenType::kKeyWord;
-					}
-					else if (nowWord == "TRUE" or nowWord == "FALSE") {
-						nowType = Token::TokenType::kBoolean;
-					}
-					else {
-						nowType = Token::TokenType::kIdentifier;
-					}
-				}
-				nowState = State::kDone;
-			}
-			break;
-		case State::kID1:
-			if (isalpha(nowChar) || isdigit(nowChar)) {
-				nowState = State::kID2;
-				nowWord.push_back(nowChar);
-			}
-			else {
-				// identifier读取了下划线，之后没有数字或字母
-				notReadNext = true;
-				toNextLine = true;
-				this->isError = true;
-				this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "identifier读取了下划线，之后没有数字或字母错误");
-				nowState = State::kStart;
-				nowWord.clear();
-				nowType = Token::TokenType::kUnknown;
-				break;
-			}
-			break;
-		case State::kID2:
-			if (isalpha(nowChar) || isdigit(nowChar)) {
-				nowWord.push_back(nowChar);
-			}
-			else if (nowChar == '_') {
-				nowWord.push_back(nowChar);
-				nowState = State::kID1;
-			}
-			else {
-				notReadNext = true;
-				nowState = State::kDone;
-			}
-			break;
-		default:
-			// 状态异常错误（词法分析程序）
-			notReadNext = true;
-			toNextLine = true;
-			this->isError = true;
-			this->errorMsgs.push_back("状态机状态异常错误（词法分析程序）");
-			nowState = State::kStart;
-			nowWord.clear();
-			nowType = Token::TokenType::kUnknown;
-			break;
-		}
+		statesOperation(nowState, nowChar, nowType, notReadNext, toNextLine, lineNum, nowWord, toNextLineInString);
 	}
 
+	finishOperation(toNextLine, nowState, notReadNext, lineNum, nowWord, nowChar, nowType);
+}
+
+void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char nowChar, Token::TokenType& nowType, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, bool& toNextLineInString)
+{
+	switch (nowState)
+	{
+	case State::kStart:
+		if (isspace(nowChar))
+			break;
+		else if (nowChar == '0') {
+			nowState = State::kIntager0;
+			nowType = Token::TokenType::kInteger;
+		}
+		else if (isdigit(nowChar) && nowChar != '0') {
+			nowState = State::kIntager;
+			nowType = Token::TokenType::kInteger;
+		}
+		else if (Sign::isOneCharSign(nowChar)) {
+			nowState = State::kOneCharSign;
+			nowType = Token::TokenType::kSign;
+		}
+		else if (Sign::isTwoCharSignStart(nowChar)) {
+			nowState = State::kTwoCharSign;
+			nowType = Token::TokenType::kSign;
+		}
+		else if (nowChar == '"') {
+			nowState = State::kString;
+			nowType = Token::TokenType::kString;
+		}
+		else if (isalpha(nowChar))
+			nowState = State::kIDOrKeyOrBool;
+		else {
+			// start 状态无法识别的单词开头（特殊符号）错误
+			addCodeError("start 状态无法识别的单词开头（特殊符号）错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			break;
+		}
+		nowWord.push_back(nowChar);
+		break;
+	case State::kDone:
+		notReadNext = true;
+		this->tokenList.push_back(Token(nowWord, nowType));
+		nowWord.clear();
+		nowType = Token::TokenType::kUnknown;
+		nowState = State::kStart;
+		break;
+	case State::kIntager0:
+		if (nowChar == 'l' || nowChar == 'L') {
+			nowWord.push_back(nowChar);
+		}
+		else if (isdigit(nowChar) || (isalpha(nowChar) && nowChar != 'l' && nowChar != 'L')) {
+			// 0作为数字或id开头错误
+			addCodeError("0作为数字或id开头错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			break;
+		}
+		else {
+			notReadNext = true;
+		}
+		nowState = State::kDone;
+		break;
+	case State::kIntager:
+		if (isdigit(nowChar)) {
+			nowWord.push_back(nowChar);
+		}
+		else if (nowChar == 'l' || nowChar == 'L') {
+			nowState = State::kDone;
+			nowWord.push_back(nowChar);
+		}
+		else if (isalpha(nowChar) && nowChar != 'l' && nowChar != 'L') {
+			// 数字作为id开头错误
+			addCodeError("数字作为id开头错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			break;
+		}
+		else {
+			nowState = State::kDone;
+			notReadNext = true;
+		}
+		break;
+	case State::kOneCharSign:
+		notReadNext = true;
+		nowState = State::kDone;
+		break;
+	case State::kTwoCharSign:
+		if (nowWord.size() != 1) {
+			// 双符号第一个符号放入错误（词法分析程序）
+			addAnalyzerError("双符号第一个符号放入错误（词法分析程序）", notReadNext, toNextLine, nowState, nowWord, nowType);
+			break;
+		}
+		else if (nowWord.at(0) == nowChar) {
+			nowState = State::kDone;
+			nowWord.push_back(nowChar);
+		}
+		else {
+			// 双符号读入第二个符号错误
+			addCodeError("双符号读入第二个符号错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			break;
+		}
+		break;
+	case State::kString:
+		if (nowChar == '"') {
+			nowState = State::kDone;
+			nowWord.push_back(nowChar);
+		}
+		else if (nowChar == '\\') {
+			nowState = State::kESC;
+			nowWord.push_back(nowChar);
+		}
+		else {
+			nowWord.push_back(nowChar);
+		}
+		break;
+	// 转义字符处理状态
+	case State::kESC:
+		if (nowChar == 'b' || nowChar == 't' || nowChar == 'n' || nowChar == 'f' 
+			|| nowChar == 'r' || nowChar == '"' || nowChar == '\\') {
+
+			nowState = State::kString;
+			nowWord.push_back(nowChar);
+		}
+		else {
+			// 无此转义字符错误
+			addCodeError("无此转义字符错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			toNextLineInString = true;
+			break;
+		}
+		break;
+	case State::kIDOrKeyOrBool:
+		if (isalpha(nowChar) || isdigit(nowChar)) {
+			nowWord.push_back(nowChar);
+		}
+		else if (nowChar == '_') {
+			nowState = State::kID1;
+			nowType = Token::TokenType::kIdentifier;
+			nowWord.push_back(nowChar);
+		}
+		else {
+			notReadNext = true;
+			if (nowType == Token::TokenType::kUnknown) {
+				if (KeyWord::isKeyWord(nowWord)) {
+					nowType = Token::TokenType::kKeyWord;
+				}
+				else if (nowWord == "TRUE" or nowWord == "FALSE") {
+					nowType = Token::TokenType::kBoolean;
+				}
+				else {
+					nowType = Token::TokenType::kIdentifier;
+				}
+			}
+			nowState = State::kDone;
+		}
+		break;
+	case State::kID1:
+		if (isalpha(nowChar) || isdigit(nowChar)) {
+			nowState = State::kID2;
+			nowWord.push_back(nowChar);
+		}
+		else {
+			// identifier读取了下划线，之后没有数字或字母
+			addCodeError("identifier读取了下划线，之后没有数字或字母错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			break;
+		}
+		break;
+	case State::kID2:
+		if (isalpha(nowChar) || isdigit(nowChar)) {
+			nowWord.push_back(nowChar);
+		}
+		else if (nowChar == '_') {
+			nowWord.push_back(nowChar);
+			nowState = State::kID1;
+		}
+		else {
+			notReadNext = true;
+			nowState = State::kDone;
+		}
+		break;
+	default:
+		// 状态异常错误（词法分析程序）
+		addAnalyzerError("状态机状态异常错误（词法分析程序）", notReadNext, toNextLine, nowState, nowWord, nowType);
+		break;
+	}
+}
+
+void LexicalAnalyzer::finishOperation(bool& toNextLine, LexicalAnalyzer::State& nowState, bool& notReadNext, int lineNum, std::string& nowWord, char nowChar, Token::TokenType& nowType)
+{
 	if (!toNextLine) {
 		if (nowState == State::kTwoCharSign) {
-			this->isError = true;
-			this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "未检测到符号的第二个字符错误");
+			addCodeError("未检测到符号的第二个字符错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
 		else if (nowState == State::kString || nowState == State::kESC) {
-			this->isError = true;
-			this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "字符串未结束错误");
+			addCodeError("字符串未结束错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
 		else if (nowState == State::kID1) {
-			this->isError = true;
-			this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + "identifier 下划线后无字母或数字错误");
+			addCodeError("identifier 下划线后无字母或数字错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
 		else if (nowWord.size() != 0) {
 			if (nowType == Token::TokenType::kUnknown) {
@@ -391,12 +350,34 @@ void LexicalAnalyzer::analyze()
 	this->tokenList.push_back(Token("EOF", Token::TokenType::kEOF));
 }
 
-vector<Token> LexicalAnalyzer::getTokenList()
+void LexicalAnalyzer::addAnalyzerError(std::string errorMessage, bool& notReadNext, bool& toNextLine, LexicalAnalyzer::State& nowState, std::string& nowWord, Token::TokenType& nowType)
+{
+	notReadNext = true;
+	toNextLine = true;
+	this->isError = true;
+	this->errorMsgs.push_back(errorMessage);
+	nowState = State::kStart;
+	nowWord.clear();
+	nowType = Token::TokenType::kUnknown;
+}
+
+void LexicalAnalyzer::addCodeError(std::string errorMessage, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, char nowChar, LexicalAnalyzer::State& nowState, Token::TokenType& nowType)
+{
+	notReadNext = true;
+	toNextLine = true;
+	this->isError = true;
+	this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + errorMessage);
+	nowState = State::kStart;
+	nowWord.clear();
+	nowType = Token::TokenType::kUnknown;
+}
+
+const vector<Token>& LexicalAnalyzer::getTokenList()
 {
 	return this->tokenList;
 }
 
-vector<string> LexicalAnalyzer::getErrorMsgs()
+const vector<string>& LexicalAnalyzer::getErrorMsgs()
 {
 	return this->errorMsgs;
 }

@@ -30,6 +30,7 @@ struct Token
 	string getStringType();
 };
 
+
 namespace KeyWord
 {
 	extern const string kStruct;
@@ -53,6 +54,7 @@ namespace KeyWord
 
 	bool isKeyWord(string word);
 };
+
 
 namespace Sign
 {
@@ -84,6 +86,7 @@ namespace Sign
 	bool isTwoCharSignStart(char word);
 };
 
+
 /// <summary>
 /// 词法分析类
 /// </summary>
@@ -96,12 +99,12 @@ public:
 	void analyze();
 
 	// 获取词法分析结果
-	vector<Token> getTokenList();
+	const vector<Token>& getTokenList();
 
 	// 查看词法分析是否有错
 	bool isLexicalError();
 	// 获取错误信息
-	vector<string> getErrorMsgs();
+	const vector<string>& getErrorMsgs();
 
 private:
 	enum class State {
@@ -124,5 +127,11 @@ private:
 
 	bool isError = false;
 	vector<string> errorMsgs;
+
+	void addCodeError(std::string errorMessage, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, char nowChar, LexicalAnalyzer::State& nowState, Token::TokenType& nowType);
+	void addAnalyzerError(std::string errorMessage, bool& notReadNext, bool& toNextLine, LexicalAnalyzer::State& nowState, std::string& nowWord, Token::TokenType& nowType);
+
+	void statesOperation(LexicalAnalyzer::State& nowState, char nowChar, Token::TokenType& nowType, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, bool& toNextLineInString);
+	void finishOperation(bool& toNextLine, LexicalAnalyzer::State& nowState, bool& notReadNext, int lineNum, std::string& nowWord, char nowChar, Token::TokenType& nowType);
 };
 
