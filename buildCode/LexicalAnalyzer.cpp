@@ -391,6 +391,10 @@ bool LexicalAnalyzer::isLexicalError()
 	return this->isError;
 }
 
+Token::Token()
+{
+}
+
 Token::Token(const string& value, TokenType type)
 {
 	this->value = value;

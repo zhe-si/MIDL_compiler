@@ -22,6 +22,7 @@ struct Token
 		kEOF
 	};
 
+	Token();
 	Token(const string& value, TokenType type);
 	Token(const string& value, TokenType type, int tokenLine);
 
