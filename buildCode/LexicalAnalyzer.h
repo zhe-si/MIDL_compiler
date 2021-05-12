@@ -1,9 +1,10 @@
 #pragma once
 
-#include "DataReader.h"
-
 #include <string>
 #include <vector>
+
+#include "DataReader.h"
+
 
 using namespace std;
 
@@ -22,11 +23,13 @@ struct Token
 	};
 
 	Token(const string& value, TokenType type);
+	Token(const string& value, TokenType type, int tokenLine);
 
 	string value;
 	TokenType type = TokenType::kUnknown;
+	int tokenLine = -1;
 
-	string changeTypeToString(TokenType type);
+	static string changeTypeToString(TokenType type);
 	string getStringType();
 };
 
@@ -58,28 +61,28 @@ namespace KeyWord
 
 namespace Sign
 {
-	extern const char kLBrace;
-	extern const char kRBrace;
-	extern const char kSemicolon;
-	extern const char kLParenthesis;
-	extern const char kRParenthesis;
-	extern const char kMultiply;
-	extern const char kPlus;
-	extern const char kMinus;
-	extern const char kWavyLine;
-	extern const char kDivision;
-	extern const char kPercent;
-	extern const char kAnd;
-	extern const char kSuperscript;
-	extern const char kOr;
-	extern const char kLSquareBracket;
-	extern const char kRSquareBracket;
-	extern const char kComma;
+	extern const string kLBrace;
+	extern const string kRBrace;
+	extern const string kSemicolon;
+	extern const string kLParenthesis;
+	extern const string kRParenthesis;
+	extern const string kMultiply;
+	extern const string kPlus;
+	extern const string kMinus;
+	extern const string kWavyLine;
+	extern const string kDivision;
+	extern const string kPercent;
+	extern const string kAnd;
+	extern const string kSuperscript;
+	extern const string kOr;
+	extern const string kLSquareBracket;
+	extern const string kRSquareBracket;
+	extern const string kComma;
 
 	extern const string kRightShift;
 	extern const string kLeftShift;
 
-	extern const vector<char> signs;
+	extern const vector<string> signs;
 	extern const vector<string> signsWithMoreChar;
 
 	bool isOneCharSign(char word);

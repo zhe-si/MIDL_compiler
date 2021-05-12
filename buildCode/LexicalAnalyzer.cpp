@@ -38,28 +38,28 @@ namespace KeyWord
 
 namespace Sign
 {
-	const char kLBrace = '{';
-	const char kRBrace = '}';
-	const char kSemicolon = ';';
-	const char kLParenthesis = '(';
-	const char kRParenthesis = ')';
-	const char kMultiply = '*';
-	const char kPlus = '+';
-	const char kMinus = '-';
-	const char kWavyLine = '~';
-	const char kDivision = '/';
-	const char kPercent = '%';
-	const char kAnd = '&';
-	const char kSuperscript = '^';
-	const char kOr = '|';
-	const char kLSquareBracket = '[';
-	const char kRSquareBracket = ']';
-	const char kComma = ',';
+	const string kLBrace = "{";
+	const string kRBrace = "}";
+	const string kSemicolon = ";";
+	const string kLParenthesis = "(";
+	const string kRParenthesis = ")";
+	const string kMultiply = "*";
+	const string kPlus = "+";
+	const string kMinus = "-";
+	const string kWavyLine = "~";
+	const string kDivision = "/";
+	const string kPercent = "%";
+	const string kAnd = "&";
+	const string kSuperscript = "^";
+	const string kOr = "|";
+	const string kLSquareBracket = "[";
+	const string kRSquareBracket = "]";
+	const string kComma = ",";
 
 	const string kRightShift = ">>";
 	const string kLeftShift = "<<";
 
-	const vector<char> signs{ kLBrace, kRBrace, kSemicolon, kLParenthesis, kRParenthesis, kMultiply, kPlus,
+	const vector<string> signs{ kLBrace, kRBrace, kSemicolon, kLParenthesis, kRParenthesis, kMultiply, kPlus,
 		kMinus, kWavyLine, kDivision, kPercent, kAnd, kSuperscript, kOr, kLSquareBracket, kRSquareBracket, kComma };
 
 	const vector<string> signsWithMoreChar{ kRightShift, kLeftShift };
@@ -67,8 +67,9 @@ namespace Sign
 
 	bool Sign::isOneCharSign(char word)
 	{
-		for (char keyWord : Sign::signs) {
-			if (word == keyWord) return true;
+		string wordStr = string(1, word);
+		for (string keyWord : Sign::signs) {
+			if (wordStr == keyWord) return true;
 		}
 		return false;
 	}
@@ -108,18 +109,21 @@ void LexicalAnalyzer::analyze()
 			notReadNext = false;
 		}
 		else {
+			if (nowChar == '\n') {
+				lineNum++;
+			}
+
 			nowChar = this->dataReader.getChar();
 		}
 		if (nowChar == -1) break;
 
 		if (nowChar == '\n') {
-			lineNum++;
 			if (!toNextLineInString) {
 				toNextLine = false;
 				toNextLineInString = false;
 				toNextLineESC = false;
 			}
-			if (nowState != State::kString) continue;
+			//if (nowState != State::kString) continue;
 		}
 		if (toNextLine) {
 			if (nowChar == '"' && !toNextLineESC) {
@@ -178,7 +182,7 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 		break;
 	case State::kDone:
 		notReadNext = true;
-		this->tokenList.push_back(Token(nowWord, nowType));
+		this->tokenList.push_back(Token(nowWord, nowType, lineNum));
 		nowWord.clear();
 		nowType = Token::TokenType::kUnknown;
 		nowState = State::kStart;
@@ -343,7 +347,7 @@ void LexicalAnalyzer::finishOperation(bool& toNextLine, LexicalAnalyzer::State& 
 					nowType = Token::TokenType::kIdentifier;
 				}
 			}
-			this->tokenList.push_back(Token(nowWord, nowType));
+			this->tokenList.push_back(Token(nowWord, nowType, lineNum));
 		}
 	}
 
@@ -355,7 +359,7 @@ void LexicalAnalyzer::addAnalyzerError(std::string errorMessage, bool& notReadNe
 	notReadNext = true;
 	toNextLine = true;
 	this->isError = true;
-	this->errorMsgs.push_back(errorMessage);
+	this->errorMsgs.push_back("LexicalAnalyzer: " + errorMessage);
 	nowState = State::kStart;
 	nowWord.clear();
 	nowType = Token::TokenType::kUnknown;
@@ -366,7 +370,7 @@ void LexicalAnalyzer::addCodeError(std::string errorMessage, bool& notReadNext, 
 	notReadNext = true;
 	toNextLine = true;
 	this->isError = true;
-	this->errorMsgs.push_back(to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + errorMessage);
+	this->errorMsgs.push_back("LexicalAnalyzer: " + to_string(lineNum) + " >  " + "\"" + nowWord + nowChar + "\" : " + errorMessage);
 	nowState = State::kStart;
 	nowWord.clear();
 	nowType = Token::TokenType::kUnknown;
@@ -391,6 +395,12 @@ Token::Token(const string& value, TokenType type)
 {
 	this->value = value;
 	this->type = type;
+}
+
+Token::Token(const string& value, TokenType type, int tokenLine)
+	:Token(value, type)
+{
+	this->tokenLine = tokenLine;
 }
 
 string Token::changeTypeToString(TokenType type)
