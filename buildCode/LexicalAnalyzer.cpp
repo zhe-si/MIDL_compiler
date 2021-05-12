@@ -432,6 +432,28 @@ string Token::changeTypeToString(TokenType type)
 	}
 }
 
+Token::TokenType Token::changeStringToType(string type)
+{
+	if (type == "Unknown")
+		return Token::TokenType::kUnknown;
+	else if (type == "KeyWord")
+		return Token::TokenType::kKeyWord;
+	else if (type == "Sign")
+		return Token::TokenType::kSign;
+	else if (type == "Identifier")
+		return Token::TokenType::kIdentifier;
+	else if (type == "Integer")
+		return Token::TokenType::kInteger;
+	else if (type == "String")
+		return Token::TokenType::kString;
+	else if (type == "Boolean")
+		return Token::TokenType::kBoolean;
+	else if (type == "EOF")
+		return Token::TokenType::kEOF;
+	else
+		return Token::TokenType::kUnknown;
+}
+
 string Token::getStringType()
 {
 	return changeTypeToString(this->type);

@@ -31,6 +31,7 @@ struct Token
 	int tokenLine = -1;
 
 	static string changeTypeToString(TokenType type);
+	static TokenType changeStringToType(string type);
 	string getStringType();
 };
 

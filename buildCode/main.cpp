@@ -11,6 +11,33 @@
 using namespace std;
 
 
+/// <summary>
+/// 从文件读单词序列
+/// 
+/// 为满足实验从文件读的要求，添加此方法，可代替LexicalAnalyzer的getTokenList接口
+/// 但本程序未用此方法，而是保持原设计直接调用的getTokenList接口。如果要从文件读，可以用该方法直接替换getTokenList
+/// 由于文件没保存单词行数，报错是行数会显示-1表示空
+/// </summary>
+/// <param name="path">文件路径</param>
+/// <returns>单词序列</returns>
+vector<Token> readTokenFile(string path) 
+{
+	ifstream inputFile(path, ios::in);
+	if (inputFile.is_open()) {
+		vector<Token> tList;
+		string value, type;
+		while (true) {
+			inputFile >> value >> type;
+			tList.push_back(Token(value, Token::changeStringToType(type)));
+			if (Token::changeStringToType(type) == Token::TokenType::kEOF) break;
+		}
+		return tList;
+	}
+	else {
+		throw exception("文件无法打开");
+	}
+}
+
 int main()
 {
 	string filePath = "E:/课程与任务/编译原理/实验/2021编译原理语法分析程序实验作业/语法测试文件/MIDL语法测试文件/test15_complex";
