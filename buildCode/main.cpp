@@ -38,10 +38,10 @@ vector<Token> readTokenFile(string path)
 	}
 }
 
+
 int main()
 {
-	string filePath = "E:/课程与任务/编译原理/实验/2021编译原理语法分析程序实验作业/语法测试文件/MIDL语法测试文件/test15_complex";
-	//string filePath = "E:/课程与任务/编译原理/实验/2021编译原理语法分析程序实验作业/语法测试文件/MIDL语法测试文件/type_spec/test8_with_error";
+	string filePath = "此处填写代码文件位置"; // TODO: 此处填写代码文件位置
 	string fileLexicalOutPath = filePath + "_lexical_out.txt";
 	string fileSyntacticOutPath = filePath + "_syntactic_out.txt";
 	string fileErrorPath = filePath + "_error.txt";
