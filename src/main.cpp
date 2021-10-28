@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "FileReader.h"
-#include "LexicalAnalyzer.h"
-#include "SyntacticAnalyzer.h"
+#include "data_reader/FileReader.h"
+#include "lexical_analyze/LexicalAnalyzer.h"
+#include "syntactic_analyze/SyntacticAnalyzer.h"
 #include "exceptions/FileException.h"
 
 
@@ -51,15 +51,17 @@ int main()
 	string fileErrorPath = filePath + "_error.txt";
 	filePath = filePath + ".txt";
 
-	ofstream fileLexicalOut(fileLexicalOutPath, ios::out);
-	ofstream fileSyntacticOut(fileSyntacticOutPath, ios::out);
-	ofstream fileError(fileErrorPath, ios::out);
+    FileReader fReader(filePath);
 
-	FileReader fReader(filePath);
-	LexicalAnalyzer lexAnalyzer(fReader);
+    ofstream fileLexicalOut(fileLexicalOutPath, ios::out);
+    ofstream fileSyntacticOut(fileSyntacticOutPath, ios::out);
+    ofstream fileError(fileErrorPath, ios::out);
+
+    LexicalAnalyzer lexAnalyzer(fReader);
 	// 进行词法分析
 	lexAnalyzer.analyze();
-	// 查看词法分析是否有错
+
+    // 查看词法分析是否有错
 	if (lexAnalyzer.isLexicalError()) {
 		// 获取错误信息
 		for (const string& errorMsg : lexAnalyzer.getErrorMsgs()) {

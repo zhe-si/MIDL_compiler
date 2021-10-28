@@ -363,7 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 ./Debug
-./buildCode/Debug
+src/Debug
 
 ./.idea
 /cmake-build-debug/

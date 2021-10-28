@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "LexicalAnalyzer.h"
+#include "../lexical_analyze/LexicalAnalyzer.h"
 
 
 using namespace std;

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "DataReader.h"
+#include "../data_reader/DataReader.h"
 
 
 using namespace std;

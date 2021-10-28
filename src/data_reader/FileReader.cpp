@@ -1,5 +1,5 @@
 #include "FileReader.h"
-#include "exceptions/FileException.h"
+#include "../exceptions/FileException.h"
 #include <fstream>
 
 using namespace std;

@@ -5,19 +5,19 @@ project(build_code)
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(build_code
-        buildCode/main.cpp
+        src/main.cpp
 
-        buildCode/LexicalAnalyzer.h
-        buildCode/LexicalAnalyzer.cpp
+        src/lexical_analyze/LexicalAnalyzer.h
+        src/lexical_analyze/LexicalAnalyzer.cpp
 
-        buildCode/SyntacticAnalyzer.h
-        buildCode/SyntacticAnalyzer.cpp
+        src/syntactic_analyze/SyntacticAnalyzer.h
+        src/syntactic_analyze/SyntacticAnalyzer.cpp
 
-        buildCode/DataReader.h
-        buildCode/StringReader.h
-        buildCode/StringReader.cpp
-        buildCode/FileReader.h
-        buildCode/FileReader.cpp
+        src/data_reader/DataReader.h
+        src/data_reader/StringReader.h
+        src/data_reader/StringReader.cpp
+        src/data_reader/FileReader.h
+        src/data_reader/FileReader.cpp
 
-        buildCode/exceptions/FileException.h
+        src/exceptions/FileException.h
         )
