@@ -1,11 +1,16 @@
 #include "FileReader.h"
+#include "exceptions/FileException.h"
 #include <fstream>
 
 using namespace std;
 
-FileReader::FileReader(string path)
+
+FileReader::FileReader(const string& path)
     :inputFile(path, ios::in)
 {
+    if (!inputFile.is_open()) {
+        throw FileException("文件打开失败！");
+    }
 }
 
 FileReader::~FileReader()
@@ -15,5 +20,5 @@ FileReader::~FileReader()
 
 char FileReader::getChar()
 {
-    return this->inputFile.get();
+    return (char) this->inputFile.get();
 }

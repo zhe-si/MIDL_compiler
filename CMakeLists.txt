@@ -18,4 +18,6 @@ add_executable(build_code
         buildCode/StringReader.cpp
         buildCode/FileReader.h
         buildCode/FileReader.cpp
+
+        buildCode/exceptions/FileException.h
         )

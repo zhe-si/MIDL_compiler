@@ -7,7 +7,7 @@
 class DataReader
 {
 public:
-	virtual ~DataReader() {};
+	virtual ~DataReader() = default;;
 
 	virtual char getChar() = 0;
 };

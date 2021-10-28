@@ -31,8 +31,8 @@ struct Token
 	int tokenLine = -1;
 
 	static string changeTypeToString(TokenType type);
-	static TokenType changeStringToType(string type);
-	string getStringType();
+	static TokenType changeStringToType(const string& type);
+	string getStringType() const;
 };
 
 
@@ -58,7 +58,7 @@ namespace KeyWord
 	extern const vector<string> keyWords;
 
 	bool isKeyWord(string word);
-};
+}
 
 
 namespace Sign
@@ -89,7 +89,7 @@ namespace Sign
 
 	bool isOneCharSign(char word);
 	bool isTwoCharSignStart(char word);
-};
+}
 
 
 /// <summary>
@@ -98,7 +98,7 @@ namespace Sign
 class LexicalAnalyzer
 {
 public:
-	LexicalAnalyzer(DataReader& dataReader);
+	explicit LexicalAnalyzer(DataReader& dataReader);
 
 	// 进行词法分析（考虑转义字符）
 	void analyze();
@@ -107,7 +107,7 @@ public:
 	const vector<Token>& getTokenList();
 
 	// 查看词法分析是否有错
-	bool isLexicalError();
+	bool isLexicalError() const;
 	// 获取错误信息
 	const vector<string>& getErrorMsgs();
 
@@ -133,8 +133,8 @@ private:
 	bool isError = false;
 	vector<string> errorMsgs;
 
-	void addCodeError(std::string errorMessage, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, char nowChar, LexicalAnalyzer::State& nowState, Token::TokenType& nowType);
-	void addAnalyzerError(std::string errorMessage, bool& notReadNext, bool& toNextLine, LexicalAnalyzer::State& nowState, std::string& nowWord, Token::TokenType& nowType);
+	void addCodeError(const std::string& errorMessage, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, char nowChar, LexicalAnalyzer::State& nowState, Token::TokenType& nowType);
+	void addAnalyzerError(const std::string& errorMessage, bool& notReadNext, bool& toNextLine, LexicalAnalyzer::State& nowState, std::string& nowWord, Token::TokenType& nowType);
 
 	void statesOperation(LexicalAnalyzer::State& nowState, char nowChar, Token::TokenType& nowType, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, bool& toNextLineInString);
 	void finishOperation(bool& toNextLine, LexicalAnalyzer::State& nowState, bool& notReadNext, int lineNum, std::string& nowWord, char nowChar, Token::TokenType& nowType);

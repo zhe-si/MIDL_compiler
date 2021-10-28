@@ -2,10 +2,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
 
 #include "FileReader.h"
 #include "LexicalAnalyzer.h"
 #include "SyntacticAnalyzer.h"
+#include "exceptions/FileException.h"
+
 
 using namespace std;
 
@@ -33,14 +36,16 @@ vector<Token> readTokenFile(const string& path)
 		return tList;
 	}
 	else {
-        throw exception();
+        throw FileException("文件打开失败！");
 	}
 }
 
 
 int main()
 {
-	string filePath = "此处填写代码文件位置"; // TODO: 此处填写代码文件位置
+    system(R"(C:\Windows\system32\chcp 65001)");// 修改终端字符集为UTF8
+
+    string filePath = "此处填写代码文件位置"; // TODO: 此处填写代码文件位置 (无文件后缀)
 	string fileLexicalOutPath = filePath + "_lexical_out.txt";
 	string fileSyntacticOutPath = filePath + "_syntactic_out.txt";
 	string fileErrorPath = filePath + "_error.txt";
@@ -61,25 +66,25 @@ int main()
 			fileError << errorMsg << endl;
 		}
 		// 获取词法分析结果
-		for (Token token : lexAnalyzer.getTokenList()) {
+		for (const Token& token : lexAnalyzer.getTokenList()) {
 			fileLexicalOut << token.value << "\t" << token.getStringType() << endl;
 		}
 	}
 	else {
 		// 获取词法分析结果
-		for (Token token : lexAnalyzer.getTokenList()) {
+		for (const Token& token : lexAnalyzer.getTokenList()) {
 			fileLexicalOut << token.value << "\t" << token.getStringType() << endl;
 		}
 
-		SyntacticAnalyzer syntactivAnalyzer(lexAnalyzer.getTokenList());
-		syntactivAnalyzer.analyze();
-		if (syntactivAnalyzer.isSyntacticError()) {
-			for (const string& errorMsg : syntactivAnalyzer.getErrorMsgs()) {
+		SyntacticAnalyzer syntacticAnalyzer(lexAnalyzer.getTokenList());
+		syntacticAnalyzer.analyze();
+		if (syntacticAnalyzer.isSyntacticError()) {
+			for (const string& errorMsg : syntacticAnalyzer.getErrorMsgs()) {
 				fileError << errorMsg << endl;
 			}
 		}
 		else {
-			for (const string& data : SyntacticTreeNode::printTree(syntactivAnalyzer.getSyntaxTree())) {
+			for (const string& data : SyntacticTreeNode::printTree(syntacticAnalyzer.getSyntaxTree())) {
 				fileSyntacticOut << data << endl;
 			}
 		}

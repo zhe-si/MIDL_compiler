@@ -8,11 +8,11 @@ using namespace std;
 class FileReader : public DataReader
 {
 public:
-    FileReader(string path);
-    ~FileReader();
+    explicit FileReader(const string& path);
+    ~FileReader() override;
 
     // Í¨¹ý DataReader ¼Ì³Ð
-    virtual char getChar() override;
+    char getChar() override;
 
 private:
     ifstream inputFile;

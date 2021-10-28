@@ -29,7 +29,7 @@ namespace KeyWord
 	bool isKeyWord(string word)
 	{
 		transform(word.begin(), word.end(), word.begin(), ::tolower);
-		for (string keyWord : keyWords) {
+		for (const string& keyWord : keyWords) {
 			if (word == keyWord) return true;
 		}
 		return false;
@@ -65,10 +65,10 @@ namespace Sign
 	const vector<string> signsWithMoreChar{ kRightShift, kLeftShift };
 
 
-	bool Sign::isOneCharSign(char word)
+	bool isOneCharSign(char word)
 	{
 		string wordStr = string(1, word);
-		for (string keyWord : Sign::signs) {
+		for (const string& keyWord : Sign::signs) {
 			if (wordStr == keyWord) return true;
 		}
 		return false;
@@ -91,7 +91,7 @@ LexicalAnalyzer::LexicalAnalyzer(DataReader& dataReader)
 void LexicalAnalyzer::analyze()
 {
 	char nowChar = -1;
-	string nowWord = "";
+	string nowWord;
 	Token::TokenType nowType = Token::TokenType::kUnknown;
 
 	int lineNum = 1;
@@ -335,7 +335,7 @@ void LexicalAnalyzer::finishOperation(bool& toNextLine, LexicalAnalyzer::State& 
 		else if (nowState == State::kID1) {
 			addCodeError("identifier 下划线后无字母或数字错误", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
-		else if (nowWord.size() != 0) {
+		else if (!nowWord.empty()) {
 			if (nowType == Token::TokenType::kUnknown) {
 				if (KeyWord::isKeyWord(nowWord)) {
 					nowType = Token::TokenType::kKeyWord;
@@ -354,7 +354,7 @@ void LexicalAnalyzer::finishOperation(bool& toNextLine, LexicalAnalyzer::State& 
 	this->tokenList.push_back(Token("EOF", Token::TokenType::kEOF));
 }
 
-void LexicalAnalyzer::addAnalyzerError(std::string errorMessage, bool& notReadNext, bool& toNextLine, LexicalAnalyzer::State& nowState, std::string& nowWord, Token::TokenType& nowType)
+void LexicalAnalyzer::addAnalyzerError(const std::string& errorMessage, bool& notReadNext, bool& toNextLine, LexicalAnalyzer::State& nowState, std::string& nowWord, Token::TokenType& nowType)
 {
 	notReadNext = true;
 	toNextLine = true;
@@ -365,7 +365,7 @@ void LexicalAnalyzer::addAnalyzerError(std::string errorMessage, bool& notReadNe
 	nowType = Token::TokenType::kUnknown;
 }
 
-void LexicalAnalyzer::addCodeError(std::string errorMessage, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, char nowChar, LexicalAnalyzer::State& nowState, Token::TokenType& nowType)
+void LexicalAnalyzer::addCodeError(const std::string& errorMessage, bool& notReadNext, bool& toNextLine, int lineNum, std::string& nowWord, char nowChar, LexicalAnalyzer::State& nowState, Token::TokenType& nowType)
 {
 	notReadNext = true;
 	toNextLine = true;
@@ -386,14 +386,12 @@ const vector<string>& LexicalAnalyzer::getErrorMsgs()
 	return this->errorMsgs;
 }
 
-bool LexicalAnalyzer::isLexicalError()
+bool LexicalAnalyzer::isLexicalError() const
 {
 	return this->isError;
 }
 
-Token::Token()
-{
-}
+Token::Token() = default;
 
 Token::Token(const string& value, TokenType type)
 {
@@ -432,7 +430,7 @@ string Token::changeTypeToString(TokenType type)
 	}
 }
 
-Token::TokenType Token::changeStringToType(string type)
+Token::TokenType Token::changeStringToType(const string& type)
 {
 	if (type == "Unknown")
 		return Token::TokenType::kUnknown;
@@ -454,7 +452,7 @@ Token::TokenType Token::changeStringToType(string type)
 		return Token::TokenType::kUnknown;
 }
 
-string Token::getStringType()
+string Token::getStringType() const
 {
 	return changeTypeToString(this->type);
 }

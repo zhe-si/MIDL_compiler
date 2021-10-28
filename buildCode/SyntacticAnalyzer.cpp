@@ -24,7 +24,7 @@ SyntacticTreeNode* SyntacticAnalyzer::getSyntaxTree()
 	return this->root;
 }
 
-bool SyntacticAnalyzer::isSyntacticError()
+bool SyntacticAnalyzer::isSyntacticError() const
 {
 	return this->isError;
 }
@@ -34,12 +34,12 @@ const vector<string>& SyntacticAnalyzer::getErrorMsgs()
 	return this->errorMsgs;
 }
 
-void SyntacticAnalyzer::addAnalyzerError(std::string errorMessage)
+void SyntacticAnalyzer::addAnalyzerError(const std::string& errorMessage)
 {
 	throw std::out_of_range("SyntacticAnalyzer: " + errorMessage);
 }
 
-void SyntacticAnalyzer::addCodeError(std::string errorMessage, int lineNum, std::string errorTokens)
+void SyntacticAnalyzer::addCodeError(const std::string& errorMessage, int lineNum, const std::string& errorTokens)
 {
 	this->isError = true;
 	this->needResumeRuning = true;
@@ -83,7 +83,7 @@ Token SyntacticAnalyzer::match(Token::TokenType tokenType)
 	}
 }
 
-Token SyntacticAnalyzer::match(std::string tokenValue)
+Token SyntacticAnalyzer::match(const std::string& tokenValue)
 {
 	Token nowToken = getToken();
 	if (nowToken.value == tokenValue) {
@@ -96,7 +96,7 @@ Token SyntacticAnalyzer::match(std::string tokenValue)
 	}
 }
 
-Token SyntacticAnalyzer::match(Token::TokenType tokenType, std::string tokenValue)
+Token SyntacticAnalyzer::match(Token::TokenType tokenType, const std::string& tokenValue)
 {	
 	Token nowToken = getToken();
 	if (nowToken.value == tokenValue && nowToken.type == tokenType) {
@@ -139,7 +139,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_member_list()
 	while (getToken().value != Sign::kRBrace && getToken().type != Token::TokenType::kEOF) {
 		SyntacticTreeNode* memberType = match_type_spec();
 		SyntacticTreeNode* memberDec = match_declarators();
-		resumeRuning(); // 出错后定位到member_list下一条语句
+        resumeRunning(); // 出错后定位到member_list下一条语句
 		match(Token::TokenType::kSign, Sign::kSemicolon);
 
 		if (isSyntacticError()) {
@@ -160,7 +160,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_member_list()
 	}
 }
 
-void SyntacticAnalyzer::resumeRuning()
+void SyntacticAnalyzer::resumeRunning()
 {
 	if (this->needResumeRuning) {
 		this->needResumeRuning = false;
@@ -250,7 +250,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_base_type_spec()
 
 SyntacticTreeNode* SyntacticAnalyzer::match_floating_pt_type()
 {
-	string type = "";
+	string type;
 	if (getToken().value == KeyWord::kFloat) {
 		type = match(Token::TokenType::kKeyWord, KeyWord::kFloat).value;
 	}
@@ -298,7 +298,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_integer_type()
 
 SyntacticTreeNode* SyntacticAnalyzer::match_signed_int()
 {
-	string type = "";
+	string type;
 	if (getToken().value == KeyWord::kShort) {
 		type = match(Token::TokenType::kKeyWord, KeyWord::kShort).value;
 	}
@@ -340,7 +340,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_signed_int()
 
 SyntacticTreeNode* SyntacticAnalyzer::match_unsigned_int()
 {
-	string type = "";
+	string type;
 	if (getToken().value == KeyWord::kUnsigned) {
 		type = match(Token::TokenType::kKeyWord, KeyWord::kUnsigned).value;
 		type.push_back(' ');
@@ -463,7 +463,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_or_expr()
 		nodes.push_back(match_xor_expr());
 	}
 
-	return makeExprRusult(node, nodes, SyntacticTreeNode::NodeType::kOrExpr);
+	return makeExprResult(node, nodes, SyntacticTreeNode::NodeType::kOrExpr);
 }
 
 SyntacticTreeNode* SyntacticAnalyzer::match_xor_expr()
@@ -476,10 +476,10 @@ SyntacticTreeNode* SyntacticAnalyzer::match_xor_expr()
 		nodes.push_back(match_and_expr());
 	}
 
-	return makeExprRusult(node, nodes, SyntacticTreeNode::NodeType::kXorExpr);
+	return makeExprResult(node, nodes, SyntacticTreeNode::NodeType::kXorExpr);
 }
 
-SyntacticTreeNode* SyntacticAnalyzer::makeExprRusult(SyntacticTreeNode* node, std::vector<SyntacticTreeNode*>& nodes, SyntacticTreeNode::NodeType type)
+SyntacticTreeNode* SyntacticAnalyzer::makeExprResult(SyntacticTreeNode* node, std::vector<SyntacticTreeNode*>& nodes, SyntacticTreeNode::NodeType type) const
 {
 	if (isSyntacticError()) {
 		if (node != nullptr) delete node;
@@ -511,7 +511,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_and_expr()
 		types.push_back(match(Token::TokenType::kSign, Sign::kAnd).value);
 		nodes.push_back(match_shift_expr());
 	}
-	return makeExprRusult(node, nodes, SyntacticTreeNode::NodeType::kAndExpr);
+	return makeExprResult(node, nodes, SyntacticTreeNode::NodeType::kAndExpr);
 }
 
 SyntacticTreeNode* SyntacticAnalyzer::match_shift_expr()
@@ -523,7 +523,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_shift_expr()
 		types.push_back(match(Token::TokenType::kSign).value);
 		nodes.push_back(match_add_expr());
 	}
-	return makeExprRusult(node, nodes, SyntacticTreeNode::NodeType::kShiftExpr);
+	return makeExprResult(node, nodes, SyntacticTreeNode::NodeType::kShiftExpr);
 }
 
 SyntacticTreeNode* SyntacticAnalyzer::match_add_expr()
@@ -535,7 +535,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_add_expr()
 		types.push_back(match(Token::TokenType::kSign).value);
 		nodes.push_back(match_mult_expr());
 	}
-	return makeExprRusult(node, nodes, SyntacticTreeNode::NodeType::kAddExpr);
+	return makeExprResult(node, nodes, SyntacticTreeNode::NodeType::kAddExpr);
 }
 
 SyntacticTreeNode* SyntacticAnalyzer::match_mult_expr()
@@ -547,12 +547,12 @@ SyntacticTreeNode* SyntacticAnalyzer::match_mult_expr()
 		types.push_back(match(Token::TokenType::kSign).value);
 		nodes.push_back(match_unary_expr());
 	}
-	return makeExprRusult(node, nodes, SyntacticTreeNode::NodeType::kMultExpr);
+	return makeExprResult(node, nodes, SyntacticTreeNode::NodeType::kMultExpr);
 }
 
 SyntacticTreeNode* SyntacticAnalyzer::match_unary_expr()
 {
-	string sign = "";
+	string sign;
 	if (getToken().value == Sign::kPlus || getToken().value == Sign::kMinus || getToken().value == Sign::kWavyLine) {
 		sign = match(Token::TokenType::kSign).value;
 	}
@@ -726,7 +726,7 @@ void SyntacticTreeNode::tranTree(SyntacticTreeNode* now, vector<string>& printer
 SyntacticTreeNode* SyntacticTreeNode::makeStructNode(string identifier, SyntacticTreeNode* memberListNode)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kStruct);
-	node->info = new string(identifier);
+	node->info = new string(std::move(identifier));
 	node->children.push_back(memberListNode);
 	return node;
 }
@@ -756,7 +756,7 @@ SyntacticTreeNode* SyntacticTreeNode::makeTypeSpecNode(SyntacticTreeNode* typeNo
 SyntacticTreeNode* SyntacticTreeNode::makeBaseTypeSpecNode(string type)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kBaseTypeSpec);
-	node->info = new string(type);
+	node->info = new string(std::move(type));
 	return node;
 }
 
@@ -770,7 +770,7 @@ SyntacticTreeNode* SyntacticTreeNode::makeBaseTypeSpecNode(SyntacticTreeNode* ty
 SyntacticTreeNode* SyntacticTreeNode::makeFloatingPtTypeNode(string type)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kFloatingPtType);
-	node->info = new string(type);
+	node->info = new string(std::move(type));
 	return node;
 }
 
@@ -784,14 +784,14 @@ SyntacticTreeNode* SyntacticTreeNode::makeIntegerTypeNode(SyntacticTreeNode* int
 SyntacticTreeNode* SyntacticTreeNode::makeSignedIntNode(string intType)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kSignedInt);
-	node->info = new string(intType);
+	node->info = new string(std::move(intType));
 	return node;
 }
 
 SyntacticTreeNode* SyntacticTreeNode::makeUnsignedIntNode(string uintType)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kUnsignedInt);
-	node->info = new string(uintType);
+	node->info = new string(std::move(uintType));
 	return node;
 }
 
@@ -808,7 +808,7 @@ SyntacticTreeNode* SyntacticTreeNode::makeDeclaratorsNode(SyntacticTreeNode* dec
 SyntacticTreeNode* SyntacticTreeNode::makeDeclaratorNode(string identifier, SyntacticTreeNode* expList)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kDeclarator);
-	node->info = new string(identifier);
+	node->info = new string(std::move(identifier));
 	if (expList != nullptr) {
 		node->children.push_back(expList);
 	}
@@ -836,21 +836,21 @@ SyntacticTreeNode* SyntacticTreeNode::makeExprNode(NodeType nodeType, SyntacticT
 {
 	SyntacticTreeNode* node = makeExprNode(nodeType, node1);
 	node->children.push_back(node2);
-	node->info = new string(sign);
+	node->info = new string(std::move(sign));
 	return node;
 }
 
 SyntacticTreeNode* SyntacticTreeNode::makeUnaryExpr(Token value, string sign)
 {
-	SyntacticTreeNode* node = makeUnaryExpr(value);
-	node->info = new string(sign);
+	SyntacticTreeNode* node = makeUnaryExpr(std::move(value));
+	node->info = new string(std::move(sign));
 	return node;
 }
 
 SyntacticTreeNode* SyntacticTreeNode::makeUnaryExpr(Token value)
 {
 	SyntacticTreeNode* node = new SyntacticTreeNode(NodeType::kUnaryExpr);
-	node->value = new Token(value);
+	node->value = new Token(std::move(value));
 	return node;
 }
 

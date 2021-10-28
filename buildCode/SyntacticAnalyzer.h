@@ -72,7 +72,7 @@ public:
 	static SyntacticTreeNode* makeUnaryExpr(Token value);
 
 private:
-	SyntacticTreeNode(NodeType nodeType);
+	explicit SyntacticTreeNode(NodeType nodeType);
 
 	NodeType nodeType;
 
@@ -96,7 +96,7 @@ private:
 class SyntacticAnalyzer
 {
 public:
-	SyntacticAnalyzer(const vector<Token>& tokenList);
+	explicit SyntacticAnalyzer(const vector<Token>& tokenList);
 	~SyntacticAnalyzer();
 
 	// 进行语法分析：递归下降法
@@ -106,7 +106,7 @@ public:
 	SyntacticTreeNode* getSyntaxTree();
 
 	// 查看语法分析是否有错
-	bool isSyntacticError();
+	bool isSyntacticError() const;
 	// 获取错误信息
 	const vector<string>& getErrorMsgs();
 
@@ -118,16 +118,16 @@ private:
 	bool isError = false;
 	vector<string> errorMsgs;
 
-	void addAnalyzerError(std::string errorMessage);
-	void addCodeError(std::string errorMessage, int lineNum, std::string errorTokens);
+	void addAnalyzerError(const std::string& errorMessage);
+	void addCodeError(const std::string& errorMessage, int lineNum, const std::string& errorTokens);
 
 	int nowTokenNum = 0;
 	Token getToken(int pos = 0);
 	bool toNextToken();
 
 	Token match(Token::TokenType tokenType);
-	Token match(std::string tokenValue);
-	Token match(Token::TokenType tokenType, std::string tokenValue);
+	Token match(const std::string& tokenValue);
+	Token match(Token::TokenType tokenType, const std::string& tokenValue);
 
 	// 为了保证与上下文无关文法名字一致，此处不用小驼峰形式命名，采用“match_非终结符”形式
 	SyntacticTreeNode* match_start_struct_type();
@@ -150,11 +150,11 @@ private:
 	SyntacticTreeNode* match_mult_expr();
 	SyntacticTreeNode* match_unary_expr();
 
-	SyntacticTreeNode* makeExprRusult(SyntacticTreeNode* node, std::vector<SyntacticTreeNode*>& nodes, SyntacticTreeNode::NodeType type);
+	SyntacticTreeNode* makeExprResult(SyntacticTreeNode* node, std::vector<SyntacticTreeNode*>& nodes, SyntacticTreeNode::NodeType type) const;
 
 	// 错误恢复
 	bool needResumeRuning = false;
 
-	void resumeRuning();
+	void resumeRunning();
 };
 

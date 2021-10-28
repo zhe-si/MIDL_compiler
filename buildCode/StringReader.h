@@ -7,10 +7,10 @@ using namespace std;
 class StringReader : public DataReader
 {
 public:
-	StringReader(const string &inputString);
+	explicit StringReader(const string &inputString);
 
 	// Í¨¹ý DataReader ¼Ì³Ð
-	virtual char getChar() override;
+	char getChar() override;
 
 private:
 	string inputString;
