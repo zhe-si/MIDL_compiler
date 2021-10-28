@@ -9,7 +9,7 @@ using namespace std;
 
 
 /// <summary>
-/// ³éÏóÓï·¨Ê÷½Úµã
+/// æŠ½è±¡è¯­æ³•æ ‘èŠ‚ç‚¹
 /// </summary>
 class SyntacticTreeNode
 {
@@ -52,7 +52,7 @@ public:
 
 	static vector<string> printTree(SyntacticTreeNode* root);
 
-	// ½Úµã¹¹Ôì¾²Ì¬·½·¨
+	// èŠ‚ç‚¹æ„é€ é™æ€æ–¹æ³•
 	static SyntacticTreeNode* makeStructNode(string identifier, SyntacticTreeNode* memberListNode);
 	static SyntacticTreeNode* makeMemberListNode(vector<SyntacticTreeNode*> memberNodes);
 	static SyntacticTreeNode* makeMemberNode(SyntacticTreeNode* typeSpecNode, SyntacticTreeNode* declaratorsNode);
@@ -80,9 +80,9 @@ private:
 	//int minChildrenNum = 0;
 	//int maxChildrenNum = INT_MAX;
 
-	// ´æ´¢½Úµã°üº¬µÄÆäËûĞÅÏ¢£¨ÀàĞÍ½ÚµãµÄ¾ßÌåÀàĞÍ¡¢ÔËËã½ÚµãµÄ·ûºÅµÈ£©
+	// å­˜å‚¨èŠ‚ç‚¹åŒ…å«çš„å…¶ä»–ä¿¡æ¯ï¼ˆç±»å‹èŠ‚ç‚¹çš„å…·ä½“ç±»å‹ã€è¿ç®—èŠ‚ç‚¹çš„ç¬¦å·ç­‰ï¼‰
 	string *info = nullptr;
-	// ´æ´¢Öµ½ÚµãµÄÖµ£¨int¡¢string¡¢bool£©
+	// å­˜å‚¨å€¼èŠ‚ç‚¹çš„å€¼ï¼ˆintã€stringã€boolï¼‰
 	Token *value = nullptr;
 
 
@@ -91,7 +91,7 @@ private:
 
 
 /// <summary>
-/// Óï·¨·ÖÎöÀà
+/// è¯­æ³•åˆ†æç±»
 /// </summary>
 class SyntacticAnalyzer
 {
@@ -99,15 +99,15 @@ public:
 	explicit SyntacticAnalyzer(const vector<Token>& tokenList);
 	~SyntacticAnalyzer();
 
-	// ½øĞĞÓï·¨·ÖÎö£ºµİ¹éÏÂ½µ·¨
+	// è¿›è¡Œè¯­æ³•åˆ†æï¼šé€’å½’ä¸‹é™æ³•
 	void analyze();
 
-	// »ñÈ¡Óï·¨·ÖÎö½á¹û
+	// è·å–è¯­æ³•åˆ†æç»“æœ
 	SyntacticTreeNode* getSyntaxTree();
 
-	// ²é¿´Óï·¨·ÖÎöÊÇ·ñÓĞ´í
+	// æŸ¥çœ‹è¯­æ³•åˆ†ææ˜¯å¦æœ‰é”™
 	bool isSyntacticError() const;
-	// »ñÈ¡´íÎóĞÅÏ¢
+	// è·å–é”™è¯¯ä¿¡æ¯
 	const vector<string>& getErrorMsgs();
 
 private:
@@ -129,7 +129,7 @@ private:
 	Token match(const std::string& tokenValue);
 	Token match(Token::TokenType tokenType, const std::string& tokenValue);
 
-	// ÎªÁË±£Ö¤ÓëÉÏÏÂÎÄÎŞ¹ØÎÄ·¨Ãû×ÖÒ»ÖÂ£¬´Ë´¦²»ÓÃĞ¡ÍÕ·åĞÎÊ½ÃüÃû£¬²ÉÓÃ¡°match_·ÇÖÕ½á·û¡±ĞÎÊ½
+	// ä¸ºäº†ä¿è¯ä¸ä¸Šä¸‹æ–‡æ— å…³æ–‡æ³•åå­—ä¸€è‡´ï¼Œæ­¤å¤„ä¸ç”¨å°é©¼å³°å½¢å¼å‘½åï¼Œé‡‡ç”¨â€œmatch_éç»ˆç»“ç¬¦â€å½¢å¼
 	SyntacticTreeNode* match_start_struct_type();
 	SyntacticTreeNode* match_struct_type();
 	SyntacticTreeNode* match_member_list();
@@ -152,7 +152,7 @@ private:
 
 	SyntacticTreeNode* makeExprResult(SyntacticTreeNode* node, std::vector<SyntacticTreeNode*>& nodes, SyntacticTreeNode::NodeType type) const;
 
-	// ´íÎó»Ö¸´
+	// é”™è¯¯æ¢å¤
 	bool needResumeRuning = false;
 
 	void resumeRunning();

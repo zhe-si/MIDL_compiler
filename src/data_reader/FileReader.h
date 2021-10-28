@@ -11,7 +11,7 @@ public:
     explicit FileReader(const string& path);
     ~FileReader() override;
 
-    // Í¨¹ý DataReader ¼Ì³Ð
+    // é€šè¿‡ DataReader ç»§æ‰¿
     char getChar() override;
 
 private:

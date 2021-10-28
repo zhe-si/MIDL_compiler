@@ -55,7 +55,7 @@ Token SyntacticAnalyzer::getToken(int pos)
 		return token;
 	}
 	else {
-		addAnalyzerError("Ô¤¶ÁÈ¡µ¥´Ê³¬³ö·¶Î§");
+		addAnalyzerError("é¢„è¯»å–å•è¯è¶…å‡ºèŒƒå›´");
 		return Token("", Token::TokenType::kUnknown);
 	}
 }
@@ -78,7 +78,7 @@ Token SyntacticAnalyzer::match(Token::TokenType tokenType)
 		return nowToken;
 	}
 	else {
-		addCodeError(nowToken.getStringType() + " µ¥´ÊÀàĞÍ²»Æ¥Åä " + Token::changeTypeToString(tokenType), nowToken.tokenLine, nowToken.value);
+		addCodeError(nowToken.getStringType() + " å•è¯ç±»å‹ä¸åŒ¹é… " + Token::changeTypeToString(tokenType), nowToken.tokenLine, nowToken.value);
 		return Token("ERROR", Token::TokenType::kUnknown);
 	}
 }
@@ -91,7 +91,7 @@ Token SyntacticAnalyzer::match(const std::string& tokenValue)
 		return nowToken;
 	}
 	else {
-		addCodeError("µ¥´Ê²»Æ¥Åä " + tokenValue, nowToken.tokenLine, nowToken.value);
+		addCodeError("å•è¯ä¸åŒ¹é… " + tokenValue, nowToken.tokenLine, nowToken.value);
 		return Token("ERROR", Token::TokenType::kUnknown);
 	}
 }
@@ -104,7 +104,7 @@ Token SyntacticAnalyzer::match(Token::TokenType tokenType, const std::string& to
 		return nowToken;
 	}
 	else {
-		addCodeError("µ¥´Ê¼°ÆäÀàĞÍ²»Æ¥Åä " + tokenValue + "(" + Token::changeTypeToString(tokenType) + ")", nowToken.tokenLine, nowToken.value);
+		addCodeError("å•è¯åŠå…¶ç±»å‹ä¸åŒ¹é… " + tokenValue + "(" + Token::changeTypeToString(tokenType) + ")", nowToken.tokenLine, nowToken.value);
 		return Token("ERROR", Token::TokenType::kUnknown);
 	}
 }
@@ -139,7 +139,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_member_list()
 	while (getToken().value != Sign::kRBrace && getToken().type != Token::TokenType::kEOF) {
 		SyntacticTreeNode* memberType = match_type_spec();
 		SyntacticTreeNode* memberDec = match_declarators();
-        resumeRunning(); // ³ö´íºó¶¨Î»µ½member_listÏÂÒ»ÌõÓï¾ä
+        resumeRunning(); // å‡ºé”™åå®šä½åˆ°member_listä¸‹ä¸€æ¡è¯­å¥
 		match(Token::TokenType::kSign, Sign::kSemicolon);
 
 		if (isSyntacticError()) {
@@ -165,15 +165,15 @@ void SyntacticAnalyzer::resumeRunning()
 	if (this->needResumeRuning) {
 		this->needResumeRuning = false;
 
-		// ÕÒµ½£»ºóÍË³ö
+		// æ‰¾åˆ°ï¼›åé€€å‡º
 		while (isSyntacticError() && getToken().value != Sign::kSemicolon) {
 			toNextToken();
 			if (getToken().type == Token::TokenType::kEOF) {
-				// Ã»ÕÒµ½£¬ÍË³ö
+				// æ²¡æ‰¾åˆ°ï¼Œé€€å‡º
 				break;
 			}
 			else if (getToken().value == Sign::kLBrace) {
-				// ÕÒµ½¿ÉÆ¥ÅäÏî£¬Æ¥ÅäºóÍË³ö
+				// æ‰¾åˆ°å¯åŒ¹é…é¡¹ï¼ŒåŒ¹é…åé€€å‡º
 				match(Token::TokenType::kSign, Sign::kLBrace);
 				match_member_list();
 				match(Token::TokenType::kSign, Sign::kRBrace);
@@ -263,7 +263,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_floating_pt_type()
 		type += match(Token::TokenType::kKeyWord, KeyWord::kDouble).value;
 	}
 	else {
-		addCodeError("floating_pt_type²»Æ¥Åä", getToken().tokenLine, getToken().value);
+		addCodeError("floating_pt_typeä¸åŒ¹é…", getToken().tokenLine, getToken().value);
 		if (getToken().type != Token::TokenType::kIdentifier) {
 			toNextToken();
 		}
@@ -323,7 +323,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_signed_int()
 		type = match(Token::TokenType::kKeyWord, KeyWord::kInt8).value;
 	}
 	else {
-		addCodeError("type_spec²»Æ¥Åä", getToken().tokenLine, getToken().value);
+		addCodeError("type_specä¸åŒ¹é…", getToken().tokenLine, getToken().value);
 		if (getToken().type != Token::TokenType::kIdentifier) {
 			toNextToken();
 		}
@@ -357,7 +357,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_unsigned_int()
 			type += match(Token::TokenType::kKeyWord, KeyWord::kLong).value;
 		}
 		else {
-			addCodeError("unsigned_int²»Æ¥Åä", getToken().tokenLine, getToken().value);
+			addCodeError("unsigned_intä¸åŒ¹é…", getToken().tokenLine, getToken().value);
 			if (getToken().type != Token::TokenType::kIdentifier) {
 				toNextToken();
 			}
@@ -377,7 +377,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_unsigned_int()
 		type = match(Token::TokenType::kKeyWord, KeyWord::kUnit8).value;
 	}
 	else {
-		addCodeError("type_spec²»Æ¥Åä", getToken().tokenLine, getToken().value);
+		addCodeError("type_specä¸åŒ¹é…", getToken().tokenLine, getToken().value);
 		if (getToken().type != Token::TokenType::kIdentifier) {
 			toNextToken();
 		}
@@ -567,7 +567,7 @@ SyntacticTreeNode* SyntacticAnalyzer::match_unary_expr()
 		t = match(Token::TokenType::kBoolean);
 	}
 	else {
-		addCodeError("unary_expr²»Æ¥Åä", getToken().tokenLine, getToken().value);
+		addCodeError("unary_exprä¸åŒ¹é…", getToken().tokenLine, getToken().value);
 		if (getToken().type != Token::TokenType::kSign) {
 			toNextToken();
 		}

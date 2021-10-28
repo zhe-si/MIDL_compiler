@@ -9,7 +9,7 @@ class StringReader : public DataReader
 public:
 	explicit StringReader(const string &inputString);
 
-	// Í¨¹ý DataReader ¼Ì³Ð
+	// é€šè¿‡ DataReader ç»§æ‰¿
 	char getChar() override;
 
 private:

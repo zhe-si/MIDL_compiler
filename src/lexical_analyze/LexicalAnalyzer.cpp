@@ -174,8 +174,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 		else if (isalpha(nowChar))
 			nowState = State::kIDOrKeyOrBool;
 		else {
-			// start ×´Ì¬ÎŞ·¨Ê¶±ğµÄµ¥´Ê¿ªÍ·£¨ÌØÊâ·ûºÅ£©´íÎó
-			addCodeError("start ×´Ì¬ÎŞ·¨Ê¶±ğµÄµ¥´Ê¿ªÍ·£¨ÌØÊâ·ûºÅ£©´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			// start çŠ¶æ€æ— æ³•è¯†åˆ«çš„å•è¯å¼€å¤´ï¼ˆç‰¹æ®Šç¬¦å·ï¼‰é”™è¯¯
+			addCodeError("start çŠ¶æ€æ— æ³•è¯†åˆ«çš„å•è¯å¼€å¤´ï¼ˆç‰¹æ®Šç¬¦å·ï¼‰é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 			break;
 		}
 		nowWord.push_back(nowChar);
@@ -192,8 +192,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 			nowWord.push_back(nowChar);
 		}
 		else if (isdigit(nowChar) || (isalpha(nowChar) && nowChar != 'l' && nowChar != 'L')) {
-			// 0×÷ÎªÊı×Ö»òid¿ªÍ·´íÎó
-			addCodeError("0×÷ÎªÊı×Ö»òid¿ªÍ·´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			// 0ä½œä¸ºæ•°å­—æˆ–idå¼€å¤´é”™è¯¯
+			addCodeError("0ä½œä¸ºæ•°å­—æˆ–idå¼€å¤´é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 			break;
 		}
 		else {
@@ -210,8 +210,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 			nowWord.push_back(nowChar);
 		}
 		else if (isalpha(nowChar) && nowChar != 'l' && nowChar != 'L') {
-			// Êı×Ö×÷Îªid¿ªÍ·´íÎó
-			addCodeError("Êı×Ö×÷Îªid¿ªÍ·´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			// æ•°å­—ä½œä¸ºidå¼€å¤´é”™è¯¯
+			addCodeError("æ•°å­—ä½œä¸ºidå¼€å¤´é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 			break;
 		}
 		else {
@@ -225,8 +225,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 		break;
 	case State::kTwoCharSign:
 		if (nowWord.size() != 1) {
-			// Ë«·ûºÅµÚÒ»¸ö·ûºÅ·ÅÈë´íÎó£¨´Ê·¨·ÖÎö³ÌĞò£©
-			addAnalyzerError("Ë«·ûºÅµÚÒ»¸ö·ûºÅ·ÅÈë´íÎó£¨´Ê·¨·ÖÎö³ÌĞò£©", notReadNext, toNextLine, nowState, nowWord, nowType);
+			// åŒç¬¦å·ç¬¬ä¸€ä¸ªç¬¦å·æ”¾å…¥é”™è¯¯ï¼ˆè¯æ³•åˆ†æç¨‹åºï¼‰
+			addAnalyzerError("åŒç¬¦å·ç¬¬ä¸€ä¸ªç¬¦å·æ”¾å…¥é”™è¯¯ï¼ˆè¯æ³•åˆ†æç¨‹åºï¼‰", notReadNext, toNextLine, nowState, nowWord, nowType);
 			break;
 		}
 		else if (nowWord.at(0) == nowChar) {
@@ -234,8 +234,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 			nowWord.push_back(nowChar);
 		}
 		else {
-			// Ë«·ûºÅ¶ÁÈëµÚ¶ş¸ö·ûºÅ´íÎó
-			addCodeError("Ë«·ûºÅ¶ÁÈëµÚ¶ş¸ö·ûºÅ´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			// åŒç¬¦å·è¯»å…¥ç¬¬äºŒä¸ªç¬¦å·é”™è¯¯
+			addCodeError("åŒç¬¦å·è¯»å…¥ç¬¬äºŒä¸ªç¬¦å·é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 			break;
 		}
 		break;
@@ -252,7 +252,7 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 			nowWord.push_back(nowChar);
 		}
 		break;
-	// ×ªÒå×Ö·û´¦Àí×´Ì¬
+	// è½¬ä¹‰å­—ç¬¦å¤„ç†çŠ¶æ€
 	case State::kESC:
 		if (nowChar == 'b' || nowChar == 't' || nowChar == 'n' || nowChar == 'f' 
 			|| nowChar == 'r' || nowChar == '"' || nowChar == '\\') {
@@ -261,8 +261,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 			nowWord.push_back(nowChar);
 		}
 		else {
-			// ÎŞ´Ë×ªÒå×Ö·û´íÎó
-			addCodeError("ÎŞ´Ë×ªÒå×Ö·û´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			// æ— æ­¤è½¬ä¹‰å­—ç¬¦é”™è¯¯
+			addCodeError("æ— æ­¤è½¬ä¹‰å­—ç¬¦é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 			toNextLineInString = true;
 			break;
 		}
@@ -298,8 +298,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 			nowWord.push_back(nowChar);
 		}
 		else {
-			// identifier¶ÁÈ¡ÁËÏÂ»®Ïß£¬Ö®ºóÃ»ÓĞÊı×Ö»ò×ÖÄ¸
-			addCodeError("identifier¶ÁÈ¡ÁËÏÂ»®Ïß£¬Ö®ºóÃ»ÓĞÊı×Ö»ò×ÖÄ¸´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			// identifierè¯»å–äº†ä¸‹åˆ’çº¿ï¼Œä¹‹åæ²¡æœ‰æ•°å­—æˆ–å­—æ¯
+			addCodeError("identifierè¯»å–äº†ä¸‹åˆ’çº¿ï¼Œä¹‹åæ²¡æœ‰æ•°å­—æˆ–å­—æ¯é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 			break;
 		}
 		break;
@@ -317,8 +317,8 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 		}
 		break;
 	default:
-		// ×´Ì¬Òì³£´íÎó£¨´Ê·¨·ÖÎö³ÌĞò£©
-		addAnalyzerError("×´Ì¬»ú×´Ì¬Òì³£´íÎó£¨´Ê·¨·ÖÎö³ÌĞò£©", notReadNext, toNextLine, nowState, nowWord, nowType);
+		// çŠ¶æ€å¼‚å¸¸é”™è¯¯ï¼ˆè¯æ³•åˆ†æç¨‹åºï¼‰
+		addAnalyzerError("çŠ¶æ€æœºçŠ¶æ€å¼‚å¸¸é”™è¯¯ï¼ˆè¯æ³•åˆ†æç¨‹åºï¼‰", notReadNext, toNextLine, nowState, nowWord, nowType);
 		break;
 	}
 }
@@ -327,13 +327,13 @@ void LexicalAnalyzer::finishOperation(bool& toNextLine, LexicalAnalyzer::State& 
 {
 	if (!toNextLine) {
 		if (nowState == State::kTwoCharSign) {
-			addCodeError("Î´¼ì²âµ½·ûºÅµÄµÚ¶ş¸ö×Ö·û´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			addCodeError("æœªæ£€æµ‹åˆ°ç¬¦å·çš„ç¬¬äºŒä¸ªå­—ç¬¦é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
 		else if (nowState == State::kString || nowState == State::kESC) {
-			addCodeError("×Ö·û´®Î´½áÊø´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			addCodeError("å­—ç¬¦ä¸²æœªç»“æŸé”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
 		else if (nowState == State::kID1) {
-			addCodeError("identifier ÏÂ»®ÏßºóÎŞ×ÖÄ¸»òÊı×Ö´íÎó", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
+			addCodeError("identifier ä¸‹åˆ’çº¿åæ— å­—æ¯æˆ–æ•°å­—é”™è¯¯", notReadNext, toNextLine, lineNum, nowWord, nowChar, nowState, nowType);
 		}
 		else if (!nowWord.empty()) {
 			if (nowType == Token::TokenType::kUnknown) {

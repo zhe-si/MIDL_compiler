@@ -14,14 +14,14 @@ using namespace std;
 
 
 /// <summary>
-/// ´ÓÎÄ¼ş¶Áµ¥´ÊĞòÁĞ
+/// ä»æ–‡ä»¶è¯»å•è¯åºåˆ—
 /// 
-/// ÎªÂú×ãÊµÑé´ÓÎÄ¼ş¶ÁµÄÒªÇó£¬Ìí¼Ó´Ë·½·¨£¬¿É´úÌæLexicalAnalyzerµÄgetTokenList½Ó¿Ú
-/// µ«±¾³ÌĞòÎ´ÓÃ´Ë·½·¨£¬¶øÊÇ±£³ÖÔ­Éè¼ÆÖ±½Óµ÷ÓÃµÄgetTokenList½Ó¿Ú¡£Èç¹ûÒª´ÓÎÄ¼ş¶Á£¬¿ÉÒÔÓÃ¸Ã·½·¨Ö±½ÓÌæ»»getTokenList
-/// ÓÉÓÚÎÄ¼şÃ»±£´æµ¥´ÊĞĞÊı£¬±¨´íÊÇĞĞÊı»áÏÔÊ¾-1±íÊ¾¿Õ
+/// ä¸ºæ»¡è¶³å®éªŒä»æ–‡ä»¶è¯»çš„è¦æ±‚ï¼Œæ·»åŠ æ­¤æ–¹æ³•ï¼Œå¯ä»£æ›¿LexicalAnalyzerçš„getTokenListæ¥å£
+/// ä½†æœ¬ç¨‹åºæœªç”¨æ­¤æ–¹æ³•ï¼Œè€Œæ˜¯ä¿æŒåŸè®¾è®¡ç›´æ¥è°ƒç”¨çš„getTokenListæ¥å£ã€‚å¦‚æœè¦ä»æ–‡ä»¶è¯»ï¼Œå¯ä»¥ç”¨è¯¥æ–¹æ³•ç›´æ¥æ›¿æ¢getTokenList
+/// ç”±äºæ–‡ä»¶æ²¡ä¿å­˜å•è¯è¡Œæ•°ï¼ŒæŠ¥é”™æ˜¯è¡Œæ•°ä¼šæ˜¾ç¤º-1è¡¨ç¤ºç©º
 /// </summary>
-/// <param name="path">ÎÄ¼şÂ·¾¶</param>
-/// <returns>µ¥´ÊĞòÁĞ</returns>
+/// <param name="path">æ–‡ä»¶è·¯å¾„</param>
+/// <returns>å•è¯åºåˆ—</returns>
 vector<Token> readTokenFile(const string& path)
 {
 	ifstream inputFile(path, ios::in);
@@ -36,16 +36,16 @@ vector<Token> readTokenFile(const string& path)
 		return tList;
 	}
 	else {
-        throw FileException("ÎÄ¼ş´ò¿ªÊ§°Ü£¡");
+        throw FileException("æ–‡ä»¶æ‰“å¼€å¤±è´¥ï¼");
 	}
 }
 
 
 int main()
 {
-    system(R"(C:\Windows\system32\chcp 65001)");// ĞŞ¸ÄÖÕ¶Ë×Ö·û¼¯ÎªUTF8
+    system(R"(C:\Windows\system32\chcp 65001)");// ä¿®æ”¹ç»ˆç«¯å­—ç¬¦é›†ä¸ºUTF8
 
-    string filePath = "´Ë´¦ÌîĞ´´úÂëÎÄ¼şÎ»ÖÃ"; // TODO: ´Ë´¦ÌîĞ´´úÂëÎÄ¼şÎ»ÖÃ (ÎŞÎÄ¼şºó×º)
+    string filePath = "æ­¤å¤„å¡«å†™ä»£ç æ–‡ä»¶ä½ç½®"; // TODO: æ­¤å¤„å¡«å†™ä»£ç æ–‡ä»¶ä½ç½® (æ— æ–‡ä»¶åç¼€)
 	string fileLexicalOutPath = filePath + "_lexical_out.txt";
 	string fileSyntacticOutPath = filePath + "_syntactic_out.txt";
 	string fileErrorPath = filePath + "_error.txt";
@@ -58,22 +58,22 @@ int main()
     ofstream fileError(fileErrorPath, ios::out);
 
     LexicalAnalyzer lexAnalyzer(fReader);
-	// ½øĞĞ´Ê·¨·ÖÎö
+	// è¿›è¡Œè¯æ³•åˆ†æ
 	lexAnalyzer.analyze();
 
-    // ²é¿´´Ê·¨·ÖÎöÊÇ·ñÓĞ´í
+    // æŸ¥çœ‹è¯æ³•åˆ†ææ˜¯å¦æœ‰é”™
 	if (lexAnalyzer.isLexicalError()) {
-		// »ñÈ¡´íÎóĞÅÏ¢
+		// è·å–é”™è¯¯ä¿¡æ¯
 		for (const string& errorMsg : lexAnalyzer.getErrorMsgs()) {
 			fileError << errorMsg << endl;
 		}
-		// »ñÈ¡´Ê·¨·ÖÎö½á¹û
+		// è·å–è¯æ³•åˆ†æç»“æœ
 		for (const Token& token : lexAnalyzer.getTokenList()) {
 			fileLexicalOut << token.value << "\t" << token.getStringType() << endl;
 		}
 	}
 	else {
-		// »ñÈ¡´Ê·¨·ÖÎö½á¹û
+		// è·å–è¯æ³•åˆ†æç»“æœ
 		for (const Token& token : lexAnalyzer.getTokenList()) {
 			fileLexicalOut << token.value << "\t" << token.getStringType() << endl;
 		}

@@ -93,22 +93,22 @@ namespace Sign
 
 
 /// <summary>
-/// ´Ê·¨·ÖÎöÀà
+/// è¯æ³•åˆ†æç±»
 /// </summary>
 class LexicalAnalyzer
 {
 public:
 	explicit LexicalAnalyzer(DataReader& dataReader);
 
-	// ½øĞĞ´Ê·¨·ÖÎö£¨¿¼ÂÇ×ªÒå×Ö·û£©
+	// è¿›è¡Œè¯æ³•åˆ†æï¼ˆè€ƒè™‘è½¬ä¹‰å­—ç¬¦ï¼‰
 	void analyze();
 
-	// »ñÈ¡´Ê·¨·ÖÎö½á¹û
+	// è·å–è¯æ³•åˆ†æç»“æœ
 	const vector<Token>& getTokenList();
 
-	// ²é¿´´Ê·¨·ÖÎöÊÇ·ñÓĞ´í
+	// æŸ¥çœ‹è¯æ³•åˆ†ææ˜¯å¦æœ‰é”™
 	bool isLexicalError() const;
-	// »ñÈ¡´íÎóĞÅÏ¢
+	// è·å–é”™è¯¯ä¿¡æ¯
 	const vector<string>& getErrorMsgs();
 
 private:
