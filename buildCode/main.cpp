@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -20,7 +19,7 @@ using namespace std;
 /// </summary>
 /// <param name="path">文件路径</param>
 /// <returns>单词序列</returns>
-vector<Token> readTokenFile(string path) 
+vector<Token> readTokenFile(const string& path)
 {
 	ifstream inputFile(path, ios::in);
 	if (inputFile.is_open()) {
@@ -34,7 +33,7 @@ vector<Token> readTokenFile(string path)
 		return tList;
 	}
 	else {
-		throw exception("文件无法打开");
+        throw exception();
 	}
 }
 
@@ -58,7 +57,7 @@ int main()
 	// 查看词法分析是否有错
 	if (lexAnalyzer.isLexicalError()) {
 		// 获取错误信息
-		for (string errorMsg : lexAnalyzer.getErrorMsgs()) {
+		for (const string& errorMsg : lexAnalyzer.getErrorMsgs()) {
 			fileError << errorMsg << endl;
 		}
 		// 获取词法分析结果
@@ -75,12 +74,12 @@ int main()
 		SyntacticAnalyzer syntactivAnalyzer(lexAnalyzer.getTokenList());
 		syntactivAnalyzer.analyze();
 		if (syntactivAnalyzer.isSyntacticError()) {
-			for (string errorMsg : syntactivAnalyzer.getErrorMsgs()) {
+			for (const string& errorMsg : syntactivAnalyzer.getErrorMsgs()) {
 				fileError << errorMsg << endl;
 			}
 		}
 		else {
-			for (string data : SyntacticTreeNode::printTree(syntactivAnalyzer.getSyntaxTree())) {
+			for (const string& data : SyntacticTreeNode::printTree(syntactivAnalyzer.getSyntaxTree())) {
 				fileSyntacticOut << data << endl;
 			}
 		}

@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 ./Debug
 ./buildCode/Debug
+
+./.idea
