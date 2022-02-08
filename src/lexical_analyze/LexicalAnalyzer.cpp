@@ -282,7 +282,7 @@ void LexicalAnalyzer::statesOperation(LexicalAnalyzer::State& nowState, char now
 				if (KeyWord::isKeyWord(nowWord)) {
 					nowType = Token::TokenType::kKeyWord;
 				}
-				else if (nowWord == "TRUE" or nowWord == "FALSE") {
+				else if (nowWord == "TRUE" || nowWord == "FALSE") {
 					nowType = Token::TokenType::kBoolean;
 				}
 				else {
@@ -340,7 +340,7 @@ void LexicalAnalyzer::finishOperation(bool& toNextLine, LexicalAnalyzer::State& 
 				if (KeyWord::isKeyWord(nowWord)) {
 					nowType = Token::TokenType::kKeyWord;
 				}
-				else if ("TRUE" == nowWord or "FALSE" == nowWord) {
+				else if ("TRUE" == nowWord || "FALSE" == nowWord) {
 					nowType = Token::TokenType::kBoolean;
 				}
 				else {

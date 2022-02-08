@@ -30,7 +30,7 @@ vector<Token> readTokenFile(const string& path)
 		string value, type;
 		while (true) {
 			inputFile >> value >> type;
-			tList.push_back(Token(value, Token::changeStringToType(type)));
+			tList.emplace_back(value, Token::changeStringToType(type));
 			if (Token::changeStringToType(type) == Token::TokenType::kEOF) break;
 		}
 		return tList;
